@@ -26,6 +26,8 @@ namespace AppKeyChanger
         private Regex regexWindowText_;
         private string appliedProcessName_;
         private string appliedWindowText_;
+        private string tableFilename = "keychange.tbl";
+        private int lastPressedKey = 0;
 
         public MainAndSettingForm()
         {
@@ -36,12 +38,8 @@ namespace AppKeyChanger
         {
             txtProcessName.Text = Properties.Settings.Default.ProcessName;
             txtWindowText.Text = Properties.Settings.Default.WindowText;
-            string appFile = System.Reflection.Assembly.GetExecutingAssembly().Location;
-            string appPath = System.IO.Directory.GetParent(appFile).FullName;
-            keyChangeTable_ = new KeyChangeTable(appPath + "\\keychange.tbl");
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
 
-            Apply();
-            
             kbdHook_ = new KeyboardHook();
             kbdHook_.LowLevelKeyboardEvent += KbdHook__LowLevelKeyboardEvent;
         }
@@ -91,11 +89,54 @@ namespace AppKeyChanger
             System.Diagnostics.Debug.WriteLine("!!");
             // 変換処理
             bool isPress = (kbdHookInfo.flags & 128) == 0;
+            if (isPress)
+            {
+                if (this.lastPressedKey != kbdHookInfo.vkCode)
+                {
+                    if (this.lastPressedKey == 164 || this.lastPressedKey == 165)
+                    {
+                        SendKey(164, 0x38, true, false);
+                    }
+                }
+            }
+            else if (this.lastPressedKey == kbdHookInfo.vkCode)
+            {
+                if (this.lastPressedKey == 164) // Left Alt
+                {
+                    this.lastPressedKey = 0;
+                    SendKey(165, 0x38, false, false);
+                    SendKey(29, 0x7b, true, false);
+                    SendKey(29, 0x7b, false, false);
+                    isCancel = true;
+                    return 0;
+                }
+                else if (this.lastPressedKey == 165) // Right Alt
+                {
+                    this.lastPressedKey = 0;
+                    SendKey(165, 0x38, false, false);
+                    SendKey(28, 0x79, true, false);
+                    SendKey(28, 0x79, false, false);
+                    isCancel = true;
+                    return 0;
+                }
+            } else if (this.lastPressedKey == 164 || this.lastPressedKey == 165)
+            {
+                SendKey(164, 0x38, false, false);
+                this.lastPressedKey = 0;
+            }
             KeyOperation keyOpe = keyChangeTable_.GetKeyOperation(kbdHookInfo.vkCode, isShiftPressed_);
             if (keyOpe != null)
             {
                 SendKey(keyOpe.VkCode, keyOpe.ScanCode, isPress, keyOpe.ShiftPressed);
                 isCancel = true;
+            }
+            if (isPress)
+            {
+                if (kbdHookInfo.vkCode == 164 || kbdHookInfo.vkCode == 165)
+                {
+                    this.lastPressedKey = kbdHookInfo.vkCode;
+                    isCancel = true;
+                }
             }
 
             return 0;
@@ -220,5 +261,32 @@ namespace AppKeyChanger
         }
 
         #endregion
+
+        private void comboBox1_TextChanged(object sender, EventArgs e)
+        {
+            int index = comboBox1.SelectedIndex;
+            switch(index)
+            {
+                case 0:
+                    this.tableFilename = "jp-jp.tbl";
+                    break;
+                case 1:
+                    this.tableFilename = "en-jp.tbl";
+                    break;
+                case 2:
+                    this.tableFilename = "jp-en.tbl";
+                    break;
+                case 3:
+                    this.tableFilename = "en-en.tbl";
+                    break;
+                default:
+                    break;
+            }
+            string appFile = System.Reflection.Assembly.GetExecutingAssembly().Location;
+            string appPath = System.IO.Directory.GetParent(appFile).FullName;
+            keyChangeTable_ = new KeyChangeTable(appPath + "\\" + tableFilename);
+
+            Apply();
+        }
     }
 }

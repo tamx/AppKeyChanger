@@ -48,6 +48,7 @@
             this.btnApply = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.taskTrayMenu.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -173,7 +174,7 @@
             // 
             // btnOK
             // 
-            this.btnOK.Location = new System.Drawing.Point(133, 194);
+            this.btnOK.Location = new System.Drawing.Point(135, 233);
             this.btnOK.Name = "btnOK";
             this.btnOK.Size = new System.Drawing.Size(75, 23);
             this.btnOK.TabIndex = 11;
@@ -183,7 +184,7 @@
             // 
             // btnApply
             // 
-            this.btnApply.Location = new System.Drawing.Point(214, 194);
+            this.btnApply.Location = new System.Drawing.Point(216, 233);
             this.btnApply.Name = "btnApply";
             this.btnApply.Size = new System.Drawing.Size(75, 23);
             this.btnApply.TabIndex = 12;
@@ -194,7 +195,7 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(295, 194);
+            this.btnCancel.Location = new System.Drawing.Point(297, 233);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 13;
@@ -206,13 +207,28 @@
             // 
             this.toolTip1.IsBalloon = true;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Items.AddRange(new object[] {
+            "jp -> jp",
+            "en -> jp",
+            "jp -> en",
+            "en -> en"});
+            this.comboBox1.Location = new System.Drawing.Point(101, 196);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(362, 20);
+            this.comboBox1.TabIndex = 14;
+            this.comboBox1.TextChanged += new System.EventHandler(this.comboBox1_TextChanged);
+            // 
             // MainAndSettingForm
             // 
             this.AcceptButton = this.btnOK;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(493, 229);
+            this.ClientSize = new System.Drawing.Size(493, 271);
+            this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnApply);
             this.Controls.Add(this.btnOK);
@@ -256,6 +272,7 @@
         private System.Windows.Forms.Button btnApply;
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.ToolTip toolTip1;
+        private System.Windows.Forms.ComboBox comboBox1;
     }
 }
 
